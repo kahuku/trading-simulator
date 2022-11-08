@@ -9,6 +9,8 @@ if PYQT_VER == 'PYQT5':
 	from PyQt5.QtGui import *
 	from PyQt5.QtCore import *
 
+from simulator import Simulator
+
 class SimulatorGUI(QMainWindow):
 
 	def __init__(self):
@@ -77,6 +79,7 @@ class SimulatorGUI(QMainWindow):
 		h.addWidget(self.filler)
 		h.addWidget(self.filler)
 		self.timeFrameDay = QRadioButton("D")
+		self.timeFrameDay.setChecked(True)
 		self.timeFrameMonth = QRadioButton("M")
 		self.timeFrameYear = QRadioButton("Y")
 		h.addWidget(self.timeFrameDay)
@@ -87,14 +90,42 @@ class SimulatorGUI(QMainWindow):
 		# buttons
 		h = QHBoxLayout()
 		self.processButton = QPushButton('Process')
-		self.clearButton = QPushButton('Clear')
+		self.processButton.clicked.connect(self.processClicked)
 		h.addWidget(self.processButton)
+		self.clearButton = QPushButton('Clear')
+		self.clearButton.clicked.connect(self.clearClicked)
 		h.addWidget(self.clearButton)
 		h.addStretch(1)
 		vbox.addLayout(h)
 
 		# show GUI
 		self.show()
+
+	def processClicked(self):
+		print("Process clicked")
+
+		if self.timeFrameDay.isChecked():
+			period = "day"
+		elif self.timeFrameMonth.isChecked():
+			period = "month"
+		elif self.timeFrameYear.isChecked():
+			period = "year"
+
+		params = {
+			'strategy': self.strategy.currentText(),
+			'timeframe': int(self.timeFrameValue.text()),
+			'period': period,
+			'ticker': self.ticker.text(),
+			'startingValue': int(self.startingValue.text())
+		}
+		simulator = Simulator(params)
+
+	def clearClicked(self):
+		self.startingValue.setText('')
+		self.endingValue.setText('')
+		self.returnValue.setText('')
+		self.ticker.setText('')
+		self.timeFrameValue.setText('')
 
 if __name__ == '__main__':
 	# This line allows CNTL-C in the terminal to kill the program

@@ -9,12 +9,14 @@ class Simulator:
 		self.period = params['period']
 		self.ticker = params['ticker']
 		self.startingValue = params['startingValue']
-
-		self.simulate()
+		self.values = []
+		self.orig = []
+		self.simulator = None
 
 	def simulate(self):
 		self.simulator = self.selectStrategy()
-		self.simulator.simulate()
+		self.values, self.orig = self.simulator.simulate()
+		return self.values, self.orig
 
 	def selectStrategy(self):
 		if self.strategy == "Buy Close, Sell Open":

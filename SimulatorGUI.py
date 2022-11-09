@@ -1,7 +1,9 @@
 import signal
 import sys
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import pyqtgraph
 
 from config import PYQT_VER
 if PYQT_VER == 'PYQT5':
@@ -33,9 +35,8 @@ class SimulatorGUI(QMainWindow):
 
 		# pyplot
 		h = QHBoxLayout()
-		self.figure = plt.figure()
-		self.canvas = FigureCanvas(self.figure)
-		h.addWidget(self.canvas)
+		self.plotWidget = pyqtgraph.plot()
+		h.addWidget(self.plotWidget)
 		vbox.addLayout(h)
 
 		# top row
@@ -103,6 +104,7 @@ class SimulatorGUI(QMainWindow):
 
 	def processClicked(self):
 		print("Process clicked")
+		self.clearPlot()
 
 		if self.timeFrameDay.isChecked():
 			period = "day"
@@ -111,6 +113,10 @@ class SimulatorGUI(QMainWindow):
 		elif self.timeFrameYear.isChecked():
 			period = "year"
 
+		# if not period or not self.timeFrameValue.text() \
+		# 	or not self.ticker.text() or self.startingValue.text():
+		# 	return
+
 		params = {
 			'strategy': self.strategy.currentText(),
 			'timeframe': int(self.timeFrameValue.text()),
@@ -118,7 +124,16 @@ class SimulatorGUI(QMainWindow):
 			'ticker': self.ticker.text(),
 			'startingValue': int(self.startingValue.text())
 		}
-		simulator = Simulator(params)
+
+		self.simulator = Simulator(params)
+		self.values, self.originalValues = self.simulator.simulate()
+
+		self.percentChange = (self.values[-1] - self.values[0]) / self.values[0] * 100
+
+		self.endingValue.setText("${:,.2f}".format(self.values[-1]))
+		self.returnValue.setText("{:+,.2f}%".format(self.percentChange))
+
+		self.plotValues()
 
 	def clearClicked(self):
 		self.startingValue.setText('')
@@ -126,6 +141,20 @@ class SimulatorGUI(QMainWindow):
 		self.returnValue.setText('')
 		self.ticker.setText('')
 		self.timeFrameValue.setText('')
+		self.timeFrameDay.setChecked(True)
+		self.timeFrameMonth.setChecked(False)
+		self.timeFrameYear.setChecked(False)
+
+		self.clearPlot()
+
+	def plotValues(self):
+		self.strategyLine = self.plotWidget.plot(np.linspace(0, len(self.values), len(self.values)).tolist(), self.values,
+												 pen=pyqtgraph.mkPen('b', width=1))
+		self.regularLine = self.plotWidget.plot(np.linspace(0, len(self.originalValues), len(self.originalValues)).tolist(), self.originalValues,
+												pen=pyqtgraph.mkPen('w', width=1))
+
+	def clearPlot(self):
+		self.plotWidget.clear()
 
 if __name__ == '__main__':
 	# This line allows CNTL-C in the terminal to kill the program

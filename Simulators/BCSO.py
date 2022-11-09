@@ -11,17 +11,24 @@ class BCSO:
 		self.period = period
 
 		self.prices = self.getPrices()
+		self.values = [self.startingValue]
+		self.originalValues = [self.startingValue]
 
 	def simulate(self):
 		print("Simulating!")
-		
-		values = [self.startingValue]
+
 		for i in range(1, len(self.prices) - 1):
 			firstPrice = float('{0:.2f}'.format(self.prices[i - 1]['close']))
 			secondPrice = float('{0:.2f}'.format(self.prices[i]['open']))
 			percentChange = (secondPrice - firstPrice) / firstPrice
-			values.append(values[-1] * (1 + percentChange))
-		print(values[-1])
+			self.values.append(self.values[-1] * (1 + percentChange))
+
+			firstPrice = float('{0:.2f}'.format(self.prices[i - 1]['close']))
+			secondPrice = float('{0:.2f}'.format(self.prices[i]['close']))
+			percentChange = (secondPrice - firstPrice) / firstPrice
+			self.originalValues.append(self.originalValues[-1] * (1 + percentChange))
+
+		return self.values, self.originalValues
 
 	def getPrices(self):
 		today = datetime.date.today()

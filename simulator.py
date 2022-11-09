@@ -13,8 +13,11 @@ class Simulator:
 		self.simulate()
 
 	def simulate(self):
-		self.strategyClass = self.selectStrategy()
+		self.simulator = self.selectStrategy()
+		self.simulator.simulate()
 
 	def selectStrategy(self):
 		if self.strategy == "Buy Close, Sell Open":
-			return BCSO()
+			return BCSO(self.startingValue, self.ticker, self.timeframe, self.period)
+		else:
+			return None

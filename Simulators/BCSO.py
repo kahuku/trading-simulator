@@ -1,7 +1,7 @@
 import datetime
-import time
 from yahoofinancials import YahooFinancials
 
+# Buy at close, sell at open, repeat
 class BCSO:
 	def __init__(self, startingValue, ticker, timeframe, period):
 		super().__init__()

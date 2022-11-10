@@ -1,4 +1,5 @@
 from Simulators.BCSO import BCSO
+from Simulators.Flip30 import Flip30
 
 class Simulator:
 	def __init__(self, params):
@@ -21,5 +22,7 @@ class Simulator:
 	def selectStrategy(self):
 		if self.strategy == "Buy Close, Sell Open":
 			return BCSO(self.startingValue, self.ticker, self.timeframe, self.period)
+		elif self.strategy == "Flip Last 30 Direction":
+			return Flip30(self.startingValue, self.ticker, self.timeframe, self.period)
 		else:
 			return None

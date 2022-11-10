@@ -1,8 +1,6 @@
 import signal
 import sys
-import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import pyqtgraph
 
 from config import PYQT_VER
@@ -12,6 +10,8 @@ if PYQT_VER == 'PYQT5':
 	from PyQt5.QtCore import *
 
 from simulator import Simulator
+
+# TODO: INPUT VALIDATION
 
 class SimulatorGUI(QMainWindow):
 
@@ -74,7 +74,7 @@ class SimulatorGUI(QMainWindow):
 		self.strategyLabel = QLabel("Strategy: ")
 		h.addWidget(self.strategyLabel)
 		self.strategy = QComboBox()
-		self.strategy.addItems(["Buy Close, Sell Open"])
+		self.strategy.addItems(["Buy Close, Sell Open", "Flip Last 30 Direction"])
 		h.addWidget(self.strategy)
 		self.filler = QLabel('')
 		h.addWidget(self.filler)

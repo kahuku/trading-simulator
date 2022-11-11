@@ -50,11 +50,20 @@ class SimulatorGUI(QMainWindow):
 		self.endingValue = QLineEdit('1000')
 		self.endingValue.setEnabled(False)
 		h.addWidget(self.endingValue)
+		vbox.addLayout(h)
+
+		# results row
+		h = QHBoxLayout()
 		self.returnLabel = QLabel("% Return: ")
 		h.addWidget(self.returnLabel)
 		self.returnValue = QLineEdit('0%')
 		self.returnValue.setEnabled(False)
 		h.addWidget(self.returnValue)
+		self.compareLabel = QLabel("Improvement: ")
+		h.addWidget(self.compareLabel)
+		self.compareValue = QLineEdit('0%')
+		self.compareValue.setEnabled(False)
+		h.addWidget(self.compareValue)
 		vbox.addLayout(h)
 
 		# middle row
@@ -113,10 +122,6 @@ class SimulatorGUI(QMainWindow):
 		elif self.timeFrameYear.isChecked():
 			period = "year"
 
-		# if not period or not self.timeFrameValue.text() \
-		# 	or not self.ticker.text() or self.startingValue.text():
-		# 	return
-
 		params = {
 			'strategy': self.strategy.currentText(),
 			'timeframe': int(self.timeFrameValue.text()),
@@ -129,9 +134,12 @@ class SimulatorGUI(QMainWindow):
 		self.values, self.originalValues = self.simulator.simulate()
 
 		self.percentChange = (self.values[-1] - self.values[0]) / self.values[0] * 100
+		self.originalChange = (self.originalValues[-1] - self.originalValues[0]) / self.originalValues[0] * 100
+		self.compareChange = self.percentChange - self.originalChange
 
 		self.endingValue.setText("${:,.2f}".format(self.values[-1]))
 		self.returnValue.setText("{:+,.2f}%".format(self.percentChange))
+		self.compareValue.setText("{:+,.2f}%".format(self.compareChange))
 
 		self.plotValues()
 

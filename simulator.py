@@ -1,5 +1,6 @@
 from Simulators.BCSO import BCSO
 from Simulators.Flip30 import Flip30
+from Simulators.RSI import RSI
 
 class Simulator:
 	def __init__(self, params):
@@ -24,5 +25,7 @@ class Simulator:
 			return BCSO(self.startingValue, self.ticker, self.timeframe, self.period)
 		elif self.strategy == "Flip Last 30 Direction":
 			return Flip30(self.startingValue, self.ticker, self.timeframe, self.period)
+		elif self.strategy == "2 Day RSI":
+			return RSI(self.startingValue, self.ticker, self.timeframe, self.period)
 		else:
 			return None

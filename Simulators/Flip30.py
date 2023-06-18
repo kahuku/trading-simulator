@@ -39,7 +39,7 @@ class Flip30:
 		return self.values, self.originalValues
 
 	def getPrices(self):
-		data = yf.Ticker(self.ticker.upper()).history(period="1mo", interval="30m")
+		data = yf.Ticker(self.ticker.upper()).history(period="1mo", interval="30m") # TODO: shouldn't be hardcoded to 1 month
 		data = data.reset_index()
 		data["Datetime"] = pd.to_datetime(data["Datetime"], utc=True)
 		data = data.groupby(pd.Grouper(key="Datetime", freq="1D")).nth([-2, -1, 1])

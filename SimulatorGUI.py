@@ -12,6 +12,9 @@ if PYQT_VER == 'PYQT5':
 from simulator import Simulator
 
 # TODO: INPUT VALIDATION
+# TODO: ADD MORE STRATEGIES
+# TODO: factor out get prices functions
+# TODO: add losing vs winning trades analysis
 
 class SimulatorGUI(QMainWindow):
 
@@ -83,7 +86,7 @@ class SimulatorGUI(QMainWindow):
 		self.strategyLabel = QLabel("Strategy: ")
 		h.addWidget(self.strategyLabel)
 		self.strategy = QComboBox()
-		self.strategy.addItems(["Buy Close, Sell Open", "Flip Last 30 Direction"])
+		self.strategy.addItems(["Buy Close, Sell Open", "Flip Last 30 Direction", "2 Day RSI"])
 		h.addWidget(self.strategy)
 		self.filler = QLabel('')
 		h.addWidget(self.filler)

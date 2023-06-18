@@ -1,6 +1,8 @@
 import datetime
 from yahoofinancials import YahooFinancials
 
+WINDOW = 14
+
 # Buy at close, sell at open, repeat
 class BCSO:
 	def __init__(self, startingValue, ticker, timeframe, period):
@@ -33,11 +35,11 @@ class BCSO:
 	def getPrices(self):
 		today = datetime.date.today()
 		if self.period == "day":
-			startDate = today - datetime.timedelta(days=self.timeframe)
+			startDate = today - datetime.timedelta(days=self.timeframe) - datetime.timedelta(days=WINDOW)
 		elif self.period == "month":
-			startDate = today - datetime.timedelta(weeks=4*self.timeframe)
+			startDate = today - datetime.timedelta(weeks=4*self.timeframe) - datetime.timedelta(days=WINDOW)
 		elif self.period == "year":
-			startDate = today - datetime.timedelta(weeks=52*self.timeframe)
+			startDate = today - datetime.timedelta(weeks=52*self.timeframe) - datetime.timedelta(days=WINDOW)
 
 		yf = YahooFinancials(self.ticker.upper())
 		return yf.get_historical_price_data(str(startDate), str(today), 'daily')[self.ticker]['prices']

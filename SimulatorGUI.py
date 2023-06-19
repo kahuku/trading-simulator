@@ -10,6 +10,8 @@ if PYQT_VER == 'PYQT5':
 	from PyQt5.QtCore import *
 
 from simulator import Simulator
+from GUIHelpers.RSIReversal import RSIInputDialog
+from GUIHelpers.TradeStatsDialog import TradeStatsDialog
 
 # TODO: INPUT VALIDATION
 # TODO: ADD MORE STRATEGIES
@@ -86,7 +88,7 @@ class SimulatorGUI(QMainWindow):
 		self.strategyLabel = QLabel("Strategy: ")
 		h.addWidget(self.strategyLabel)
 		self.strategy = QComboBox()
-		self.strategy.addItems(["Buy Close, Sell Open", "Flip Last 30 Direction", "2 Day RSI"])
+		self.strategy.addItems(["Buy Close, Sell Open", "Flip Last 30 Direction", "RSI Reversal"])
 		h.addWidget(self.strategy)
 		self.filler = QLabel('')
 		h.addWidget(self.filler)
@@ -125,13 +127,23 @@ class SimulatorGUI(QMainWindow):
 		elif self.timeFrameYear.isChecked():
 			period = "year"
 
+		strategy = self.strategy.currentText()
+
 		params = {
-			'strategy': self.strategy.currentText(),
+			'strategy': strategy,
 			'timeframe': int(self.timeFrameValue.text()),
 			'period': period,
 			'ticker': self.ticker.text(),
 			'startingValue': int(self.startingValue.text())
 		}
+
+		if strategy == 'RSI Reversal':
+			rsi_dialog = RSIInputDialog(self)
+			if rsi_dialog.exec_() == QDialog.Accepted:
+				rsi_window, turnaround_days, rsi_value = rsi_dialog.get_values()
+				params['rsi_window'] = rsi_window
+				params['turnaround_days'] = turnaround_days
+				params['rsi_value'] = rsi_value
 
 		self.simulator = Simulator(params)
 		self.values, self.originalValues = self.simulator.simulate()
@@ -145,6 +157,12 @@ class SimulatorGUI(QMainWindow):
 		self.compareValue.setText("{:+,.2f}%".format(self.compareChange))
 
 		self.plotValues()
+
+		if strategy == 'RSI Reversal':
+			# Open the trade statistics dialog
+			profitable_trades, unprofitable_trades = TradeStatsDialog.getProfitableTrades(self.values)
+			stats_dialog = TradeStatsDialog(profitable_trades, unprofitable_trades, self)
+			stats_dialog.exec_()
 
 	def clearClicked(self):
 		self.startingValue.setText('')

@@ -11,6 +11,12 @@ class Simulator:
 		self.period = params['period']
 		self.ticker = params['ticker']
 		self.startingValue = params['startingValue']
+
+		if self.strategy == 'RSI Reversal':
+			self.rsi_window = params['rsi_window']
+			self.turnaround_days = params['turnaround_days']
+			self.rsi_value = params['rsi_value']
+
 		self.values = []
 		self.orig = []
 		self.simulator = None
@@ -25,7 +31,7 @@ class Simulator:
 			return BCSO(self.startingValue, self.ticker, self.timeframe, self.period)
 		elif self.strategy == "Flip Last 30 Direction":
 			return Flip30(self.startingValue, self.ticker, self.timeframe, self.period)
-		elif self.strategy == "2 Day RSI":
-			return RSI(self.startingValue, self.ticker, self.timeframe, self.period)
+		elif self.strategy == "RSI Reversal":
+			return RSI(self.startingValue, self.ticker, self.timeframe, self.period, self.rsi_window, self.turnaround_days, self.rsi_value)
 		else:
 			return None
